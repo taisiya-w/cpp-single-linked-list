@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <string>
 #include <utility>
+#include <algorithm>
 
 template <typename Type>
 class SingleLinkedList {
@@ -69,10 +70,12 @@ class SingleLinkedList {
             }
 
             [[nodiscard]] reference operator*() const noexcept {
+                assert(node_ != nullptr);
                 return node_->value;
             }
 
             [[nodiscard]] pointer operator->() const noexcept {
+                assert(node_ != nullptr);
                 return &node_->value;
             }
 
@@ -144,6 +147,7 @@ class SingleLinkedList {
     }
 
     Iterator InsertAfter(ConstIterator pos, const Type& value) {
+        assert(pos.node_ != nullptr);
         Node* node = pos.node_;
         Node* new_node = new Node(value, node->next_node);
         node->next_node = new_node;
@@ -185,6 +189,7 @@ class SingleLinkedList {
     }
 
     Iterator EraseAfter(ConstIterator pos) noexcept {
+        assert(pos.node_ != nullptr);
         Node* node = pos.node_;
         Node* target = node->next_node;
 
@@ -226,19 +231,7 @@ void swap(SingleLinkedList<Type>& lhs, SingleLinkedList<Type>& rhs) noexcept {
 
 template <typename Type>
 bool operator==(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
-    auto it1 = lhs.begin();
-    auto end1 = lhs.end();
-    auto it2 = rhs.begin();
-    auto end2 = rhs.end();
-
-    while (it1 != end1 && it2 != end2) {
-        if (*it1 != *it2) {
-            return false;
-        }
-        ++it1;
-        ++it2;
-    }
-    return it1 == end1 && it2 == end2;
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template <typename Type>
